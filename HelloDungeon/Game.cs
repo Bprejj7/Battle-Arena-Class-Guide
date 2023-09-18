@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography.X509Certificates;
@@ -8,42 +9,36 @@ using System.Threading.Tasks;
 
 namespace HelloDungeon
 {
+    struct Weapon
+    {
+        public string Name;
+        public float Damage;
+        public float Durability;
+        public float Weight;
+    }
     class Game
     {
 
-
-        struct Weapon
-        {
-            public string Name;
-            public float Damage;
-            public float Durability;
-            public float Weight;
-        }
-
-
-
-        struct Hero
-        {
-            public string Name;
-            public float Health;
-            public float Strength;
-            public float Defense;
-            public float Energy;
-            public Weapon currentWeapon;
-        }
-
-        bool gameOver;
-        int CurrentScene = 0;
 
         Hero Cole;
         Hero PepperMint;
         Hero Kane;
         Hero Player;
+        Hero[] Enemies;
+        int CurrentEnemyIndex = 0;
+
+
+        bool gameOver;
+        int CurrentScene = 0;
 
 
 
         void Start()
         {
+            Cole = new Hero("Kane", 100f, 5f, 20f, Stellar);
+            PepperMint = new Hero("PepperMint", 200f, 5f, 30f, Wendigo);
+            Kane = new Hero("Kane", 200f, 10f, 50, Stellar);
+
             //Create character and weapon stats and give weapons to specific characters
             Weapon Stellar;
             Stellar.Name = ("Stellar");
@@ -57,31 +52,26 @@ namespace HelloDungeon
             Wendigo.Durability = 100;
             Wendigo.Weight = 50;
 
-            Hero Cole;
-            Cole.Name = ("Cole");
-            Cole.Health = 100;
-            Cole.Strength = 20;
-            Cole.Defense = 20;
-            Cole.Energy = 50;
-            Cole.currentWeapon = Stellar;
 
-            Hero PepperMint;
-            PepperMint.Name = ("PepperMint");
-            PepperMint.Health = 200;
-            PepperMint.Strength = 40;
-            PepperMint.Defense = 30;
-            PepperMint.Energy = 50;
-            PepperMint.currentWeapon = Wendigo;
+            Enemies = new Hero[3] { Kane, PepperMint, Cole };
 
-            Hero Kane;
-            Kane.Name = ("Kane");
-            Kane.Health = 200;
-            Kane.Strength = 50;
-            Kane.Defense = 50;
-            Kane.Energy = 100;
-            Kane.currentWeapon = Stellar;
 
         }
+
+        void EndGameScene()
+        {
+            string playerChoice = GetInput("You Died. Play Again?", "Yes", "No", "");
+
+            if (playerChoice == "1") ;
+            {
+                CurrentScene = 0;
+            }
+            else if (playerChoice == "2")
+            {
+            }
+        }
+
+
 
         public void run()
         {
@@ -90,33 +80,19 @@ namespace HelloDungeon
                 Console.WriteLine("Name: " + hero.Name);
                 Console.WriteLine("Health: " + hero.Health);
                 Console.WriteLine("Strength: " + hero.Defense);
-                Console.WriteLine("Defense: " + hero.Energy);
+                Console.WriteLine("Defense: " + hero.GetEnergy);
 
                 Console.Clear();
             }
         }
 
-        void Fight()
+        //Have heroes attack each other 
+        void Attack(ref Hero hero1, ref Hero hero2)
         {
-            bool IsDefending = true;
-            string battleChoice = GetInput("Choose an action", "Attack", "Defend", "run");
-
-            if (battleChoice == "1")
-            {
-                Kane.Health = Attack(Player, Kane);
-                Console.WriteLine("You grit your teeth.");
-            }
-            else if (battleChoice == "2")
-            {
-                Console.WriteLine("You get ready to defend");
-            }
-
-            if (IsDefending = true)
-            {
-                Player.Defense /= 5;
-            }
-
+            hero1.GetDamage = 5;
+            hero2.GetHealth -= hero1.GetDamage;
         }
+
 
         string GetInput(string prompt, string option1, string option2, string option3)
         {
@@ -137,15 +113,15 @@ namespace HelloDungeon
         {
             if (CurrentScene == 0)
             {
-                Fight(ref Cole, ref PepperMint);
+                Fight();
 
                 Console.Clear();
 
-                Fight(ref Cole, ref PepperMint);
+                Fight();
 
                 Console.Clear();
 
-                Fight(ref Cole, ref PepperMint);
+                Fight();
 
                 void HeroSelection()
                 {
@@ -188,6 +164,23 @@ namespace HelloDungeon
             }
         }
 
+        void WinResultsScene()
+        {
+            if (Player.GetHealth > 0 && Enemies[CurrentEnemyIndex].GetHealth <= 0)
+            {
+                Console.WriteLine("The winner is: " + Player.GetName);
+            }
+
+            if (CurrentEnemyIndex) ;
+
+            else if (Cole.GetHealth > 0 && Player.GetHealth <= 0)
+            {
+                Console.WriteLine("The winner is: " + Cole.GetName);
+            }
+            Console.ReadKey(true);
+            Console.Clear();
+        }
+
 
         void SetArrayValue(int[] arr, int index, int value)
         {
@@ -200,6 +193,27 @@ namespace HelloDungeon
 
         }
 
+        //Have an array print out the highest number.
+        void HighestInt(int[] arr)
+        {
+            int currentNumber = 0;
+            for (int count = 0; count < arr.Length; count++)
+            {
+                if (arr[count] <= currentNumber)
+                {
+
+                }
+                else 
+                {
+                    currentNumber = arr[count];
+                }
+
+            }
+ 
+            Console.WriteLine(currentNumber);
+        }
+
+
         void TotalValue(int[] arr)
         {
             int sum = 0;
@@ -210,35 +224,4 @@ namespace HelloDungeon
             }
             Console.WriteLine(sum);
         } 
-
-
-        
-
-        void BattleScene1()
-        {
-
-            Start();
-
-            while (gameOver == false)
-            {
-                Update();
-            }
-        }
-
-        void BattleScene2()
-        {
-            Fight(ref Cole, ref PepperMint);
-
-            Console.Clear();
-
-            if (Cole.Health > 0 && PepperMint.Health <= 0)
-            {
-                Console.WriteLine("The winner is: " + Cole.Name);
-            }
-            else if (PepperMint.Health > 0 && Cole.Health <= 0)
-            {
-                Console.WriteLine("The winner is " + PepperMint.Name);
-            }
-        }
     }
-}

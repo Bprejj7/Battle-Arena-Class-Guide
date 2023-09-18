@@ -10,7 +10,7 @@ namespace HelloDungeon
             Game game = new Game();
 
             //Run the Game
-            game.Run();
+            game.run();
         }
     }
 }
