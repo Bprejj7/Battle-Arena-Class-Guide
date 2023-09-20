@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +15,16 @@ namespace HelloDungeon
         private float _damage;
         private float _defense;
         private float _defenseBoost = 5;
+        
         public Weapon _currentWeapon;
+
+        public Hero()
+        {
+            _name = "";
+            _health = 0f;
+            _damage = 0f;
+            _defense = 0f;
+        }
 
         public Hero(string name, float health, float damage, float defense, Weapon weapon)
         {
@@ -42,6 +52,11 @@ namespace HelloDungeon
         public string GetName()
         {
             return _name;
+        }
+
+        public float GetDefense()
+        {
+            return _defense;
         }
 
         public void RaiseDefense()

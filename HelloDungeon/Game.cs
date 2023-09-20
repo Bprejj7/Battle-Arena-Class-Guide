@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -21,11 +22,14 @@ namespace HelloDungeon
 
 
         Hero Cole;
-        Hero PepperMint;
+        Hero Grayson;
         Hero Kane;
         Hero Player;
+        Hero Payne;
         Hero[] Enemies;
         int CurrentEnemyIndex = 0;
+
+        Player PlayerCharacter;
 
 
         bool gameOver;
@@ -35,9 +39,6 @@ namespace HelloDungeon
 
         void Start()
         {
-            Cole = new Hero("Kane", 100f, 5f, 20f, Stellar);
-            PepperMint = new Hero("PepperMint", 200f, 5f, 30f, Wendigo);
-            Kane = new Hero("Kane", 200f, 10f, 50, Stellar);
 
             //Create character and weapon stats and give weapons to specific characters
             Weapon Stellar;
@@ -53,103 +54,104 @@ namespace HelloDungeon
             Wendigo.Weight = 50;
 
 
-            Enemies = new Hero[3] { Kane, PepperMint, Cole };
+            Enemies = new Hero[4] { Kane, Grayson, Cole, Payne };
 
-
+            Cole = new Hero("Cole", 100f, 5f, 20f, Stellar);
+            Grayson = new Hero("Grayson", 200f, 5f, 30f, Wendigo);
+            Kane = new Hero("Kane", 200f, 10f, 50, Stellar);
+            Payne = new Hero("Payne", 300f, 15f, 100f, Wendigo);
         }
 
         void EndGameScene()
         {
-            string playerChoice = GetInput("You Died. Play Again?", "Yes", "No", "");
+            string playerChoice = PlayerCharacter.GetInput("You Died. Play Again?", "Yes", "No");
 
-            if (playerChoice == "1") ;
+            if (playerChoice == "1") 
             {
                 CurrentScene = 0;
             }
             else if (playerChoice == "2")
             {
+                gameOver = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
+                Console.Clear();
+                return;
             }
         }
 
-
+        public virtual void PrintStats(Hero hero)
+        {
+            Console.WriteLine("Name: " + hero.GetName());
+            Console.WriteLine("Health: " + hero.GetHealth());
+            Console.WriteLine("Strength: " + hero.GetDefense());
+            Console.WriteLine("Defense: " + hero.GetDefense());
+        }
 
         public void run()
         {
-            void PrintStats(Hero hero)
-            {
-                Console.WriteLine("Name: " + hero.Name);
-                Console.WriteLine("Health: " + hero.Health);
-                Console.WriteLine("Strength: " + hero.Defense);
-                Console.WriteLine("Defense: " + hero.GetEnergy);
-
-                Console.Clear();
-            }
         }
 
         //Have heroes attack each other 
         void Attack(ref Hero hero1, ref Hero hero2)
         {
-            hero1.GetDamage = 5;
-            hero2.GetHealth -= hero1.GetDamage;
+            hero1.GetDamage() = 5;
+            hero2.GetHealth() -= hero1.GetDamage();
         }
 
-
-        string GetInput(string prompt, string option1, string option2, string option3)
+        void HeroSelection()
         {
-            string playerChoice = "";
+            PlayerCharacter = new Player();
+            string HeroChoice = PlayerCharacter.GetInput("Choose Your Hero", Cole.GetName(), Grayson.GetName(), Kane.GetName(), Payne.GetName());
 
-            Console.WriteLine(prompt);
-            Console.WriteLine("1: " + option1);
-            Console.WriteLine("2" + option2);
-            Console.WriteLine("3" + option3);
-            Console.Write(">");
 
-            playerChoice = Console.ReadLine();
+            Hero hero = PlayerCharacter;
+            if (HeroChoice == "1")
+            {
+                PlayerCharacter = new Player(Cole.GetName(), Cole.GetHealth(), Cole.GetDamage(), Cole.GetDefense(), Cole.GetWeapon());
+            }
+            else if (HeroChoice == "2")
+            {
+                PlayerCharacter = new Player(Grayson.GetName(), Grayson.GetHealth(), Grayson.GetDamage(), Grayson.GetDefense(), Grayson.GetWeapon());
+            }
+            else if (HeroChoice == "3")
+            {
+                PlayerCharacter = new Player(Kane.GetName(), Kane.GetHealth(), Kane.GetDamage(), Kane.GetDefense(), Kane.GetWeapon());
+            }
+            else if (HeroChoice == "4")
+            {
+                PlayerCharacter = new Player(Payne.GetName(), Payne.GetHealth(), Payne.GetDamage(), Payne.GetDefense(), Payne.GetWeapon());
+            }
+            else
+            {
+                Console.WriteLine("Invalid Input");
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey(true);
+                Console.Clear();
+                return;
+            }
 
-            return playerChoice;
+
         }
-
         void Update()
         {
             if (CurrentScene == 0)
             {
-                Fight();
+                // Fight();
 
                 Console.Clear();
 
-                Fight();
+                // Fight();
 
                 Console.Clear();
 
-                Fight();
-
-                void HeroSelection()
-                {
-                    string HeroChoice = GetInput("Choose Your Hero", Cole.Name, PepperMint.Name, Kane.Name);
-
-                    if (HeroChoice == "1")
-                    {
-                        Player = Cole;
-                    }
-                    else if (HeroChoice == "2")
-                    {
-                        Player = PepperMint;
-                    }
-                    else if (HeroChoice == "3")
-                    {
-                        Player = Kane;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid Input");
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey(true);
-                        Console.Clear();
-                        return;
-                    }
+                //Fight();
 
 
-                }
 
 
 
@@ -166,14 +168,14 @@ namespace HelloDungeon
 
         void WinResultsScene()
         {
-            if (Player.GetHealth > 0 && Enemies[CurrentEnemyIndex].GetHealth <= 0)
+            if (Player.GetHealth() > 0 && Enemies[CurrentEnemyIndex].GetHealth() <= 0)
             {
                 Console.WriteLine("The winner is: " + Player.GetName);
             }
 
-            if (CurrentEnemyIndex) ;
+            //if (CurrentEnemyIndex) ;
 
-            else if (Cole.GetHealth > 0 && Player.GetHealth <= 0)
+            else if (Cole.GetHealth() > 0 && Player.GetHealth() <= 0)
             {
                 Console.WriteLine("The winner is: " + Cole.GetName);
             }
@@ -203,13 +205,13 @@ namespace HelloDungeon
                 {
 
                 }
-                else 
+                else
                 {
                     currentNumber = arr[count];
                 }
 
             }
- 
+
             Console.WriteLine(currentNumber);
         }
 
@@ -223,5 +225,6 @@ namespace HelloDungeon
                 sum += arr[i];
             }
             Console.WriteLine(sum);
-        } 
+        }
     }
+}
